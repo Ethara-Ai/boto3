@@ -32,38 +32,20 @@ class ResourceMeta:
         resource_model=None,
     ):
         #: (``string``) The service name, e.g. 's3'
-        self.service_name = service_name
-
-        if identifiers is None:
-            identifiers = []
-        #: (``list``) List of identifier names
-        self.identifiers = identifiers
-
-        #: (:py:class:`~botocore.client.BaseClient`) Low-level Botocore client
-        self.client = client
-        #: (``dict``) Loaded resource data attributes
-        self.data = data
-
-        # The resource model for that resource
-        self.resource_model = resource_model
+        pass
 
     def __repr__(self):
-        return f'ResourceMeta(\'{self.service_name}\', identifiers={self.identifiers})'
+        pass
 
     def __eq__(self, other):
         # Two metas are equal if their components are all equal
-        if other.__class__.__name__ != self.__class__.__name__:
-            return False
-
-        return self.__dict__ == other.__dict__
+        pass
 
     def copy(self):
         """
         Create a copy of this metadata object.
         """
-        params = self.__dict__.copy()
-        service_name = params.pop('service_name')
-        return ResourceMeta(service_name, **params)
+        pass
 
 
 class ServiceResource:
@@ -93,57 +75,14 @@ class ServiceResource:
     def __init__(self, *args, **kwargs):
         # Always work on a copy of meta, otherwise we would affect other
         # instances of the same subclass.
-        self.meta = self.meta.copy()
-
-        # Create a default client if none was passed
-        if kwargs.get('client') is not None:
-            self.meta.client = kwargs.get('client')
-        else:
-            self.meta.client = boto3.client(self.meta.service_name)
-
-        # Allow setting identifiers as positional arguments in the order
-        # in which they were defined in the ResourceJSON.
-        for i, value in enumerate(args):
-            setattr(self, f"_{self.meta.identifiers[i]}", value)
-
-        # Allow setting identifiers via keyword arguments. Here we need
-        # extra logic to ignore other keyword arguments like ``client``.
-        for name, value in kwargs.items():
-            if name == 'client':
-                continue
-
-            if name not in self.meta.identifiers:
-                raise ValueError(f'Unknown keyword argument: {name}')
-
-            setattr(self, f"_{name}", value)
-
-        # Validate that all identifiers have been set.
-        for identifier in self.meta.identifiers:
-            if getattr(self, identifier) is None:
-                raise ValueError(f'Required parameter {identifier} not set')
+        pass
 
     def __repr__(self):
-        identifiers = [
-            f'{identifier}={repr(getattr(self, identifier))}'
-            for identifier in self.meta.identifiers
-        ]
-        return f"{self.__class__.__name__}({', '.join(identifiers)})"
+        pass
 
     def __eq__(self, other):
         # Should be instances of the same resource class
-        if other.__class__.__name__ != self.__class__.__name__:
-            return False
-
-        # Each of the identifiers should have the same value in both
-        # instances, e.g. two buckets need the same name to be equal.
-        for identifier in self.meta.identifiers:
-            if getattr(self, identifier) != getattr(other, identifier):
-                return False
-
-        return True
+        pass
 
     def __hash__(self):
-        identifiers = []
-        for identifier in self.meta.identifiers:
-            identifiers.append(getattr(self, identifier))
-        return hash((self.__class__.__name__, tuple(identifiers)))
+        pass

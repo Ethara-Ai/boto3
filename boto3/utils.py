@@ -48,25 +48,11 @@ class ServiceContext(_ServiceContext):
 
 
 def lazy_call(full_name, **kwargs):
-    parent_kwargs = kwargs
-
-    def _handler(**kwargs):
-        module, function_name = full_name.rsplit('.', 1)
-        module = import_module(module)
-        kwargs.update(parent_kwargs)
-        return getattr(module, function_name)(**kwargs)
-
-    return _handler
+    pass
 
 
 def inject_attribute(class_attributes, name, value):
-    if name in class_attributes:
-        raise RuntimeError(
-            f'Cannot inject class attribute "{name}", attribute '
-            f'already exists in class dict.'
-        )
-    else:
-        class_attributes[name] = value
+    pass
 
 
 class LazyLoadedWaiterModel:
@@ -85,6 +71,4 @@ class LazyLoadedWaiterModel:
         self._api_version = api_version
 
     def get_waiter(self, waiter_name):
-        return self._session.get_waiter_model(
-            self._service_name, self._api_version
-        ).get_waiter(waiter_name)
+        pass

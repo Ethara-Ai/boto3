@@ -61,66 +61,26 @@ def _create_crt_client(session, config, region_name, cred_provider):
     Instantiating many of these may lead to degraded performance or
     system resource exhaustion.
     """
-    create_crt_client_kwargs = {
-        'region': region_name,
-        'use_ssl': True,
-        'crt_credentials_provider': cred_provider,
-    }
-    return create_s3_crt_client(**create_crt_client_kwargs)
+    pass
 
 
 def _create_crt_request_serializer(session, region_name):
-    return BotocoreCRTRequestSerializer(
-        session, {'region_name': region_name, 'endpoint_url': None}
-    )
+    pass
 
 
 def _create_crt_s3_client(
     session, config, region_name, credentials, lock, **kwargs
 ):
     """Create boto3 wrapper class to manage crt lock reference and S3 client."""
-    cred_wrapper = BotocoreCRTCredentialsWrapper(credentials)
-    cred_provider = cred_wrapper.to_crt_credentials_provider()
-    return CRTS3Client(
-        _create_crt_client(session, config, region_name, cred_provider),
-        lock,
-        region_name,
-        cred_wrapper,
-    )
+    pass
 
 
 def _initialize_crt_transfer_primatives(client, config):
-    lock = acquire_crt_s3_process_lock(PROCESS_LOCK_NAME)
-    if lock is None:
-        # If we're unable to acquire the lock, we cannot
-        # use the CRT in this process and should default to
-        # the classic s3transfer manager.
-        return None, None
-
-    session = Session()
-    region_name = client.meta.region_name
-    credentials = client._get_credentials()
-
-    serializer = _create_crt_request_serializer(session, region_name)
-    s3_client = _create_crt_s3_client(
-        session, config, region_name, credentials, lock
-    )
-    return serializer, s3_client
+    pass
 
 
 def get_crt_s3_client(client, config):
-    global CRT_S3_CLIENT
-    global BOTOCORE_CRT_SERIALIZER
-
-    with CLIENT_CREATION_LOCK:
-        if CRT_S3_CLIENT is None:
-            serializer, s3_client = _initialize_crt_transfer_primatives(
-                client, config
-            )
-            BOTOCORE_CRT_SERIALIZER = serializer
-            CRT_S3_CLIENT = s3_client
-
-    return CRT_S3_CLIENT
+    pass
 
 
 class CRTS3Client:
@@ -145,73 +105,17 @@ def is_crt_compatible_request(client, crt_s3_client):
     Boto3 client must use same signing region and credentials
     as the CRT_S3_CLIENT singleton. Otherwise fallback to classic.
     """
-    if crt_s3_client is None:
-        return False
-
-    boto3_creds = client._get_credentials()
-    if boto3_creds is None:
-        return False
-
-    is_same_identity = compare_identity(
-        boto3_creds.get_frozen_credentials(), crt_s3_client.cred_provider
-    )
-    is_same_region = client.meta.region_name == crt_s3_client.region
-    return is_same_region and is_same_identity
+    pass
 
 
 def compare_identity(boto3_creds, crt_s3_creds):
-    try:
-        crt_creds = crt_s3_creds()
-    except botocore.exceptions.NoCredentialsError:
-        return False
-
-    is_matching_identity = (
-        boto3_creds.access_key == crt_creds.access_key_id
-        and boto3_creds.secret_key == crt_creds.secret_access_key
-        and boto3_creds.token == crt_creds.session_token
-    )
-    return is_matching_identity
+    pass
 
 
 def _validate_crt_transfer_config(config):
-    if config is None:
-        return
-    # CRT client can also be configured via `AUTO_RESOLVE_TRANSFER_CLIENT`
-    # but it predates this validation. We only validate against CRT client
-    # configured via `CRT_TRANSFER_CLIENT` to preserve compatibility.
-    if config.preferred_transfer_client != CRT_TRANSFER_CLIENT:
-        return
-    invalid_crt_args = []
-    for param in config.DEFAULTS.keys():
-        val = config.get_deep_attr(param)
-        if (
-            param not in _ALLOWED_CRT_TRANSFER_CONFIG_OPTIONS
-            and val is not config.UNSET_DEFAULT
-        ):
-            invalid_crt_args.append(param)
-    if len(invalid_crt_args) > 0:
-        raise InvalidCrtTransferConfigError(
-            "The following transfer config options are invalid "
-            "when preferred_transfer_client is set to crt: "
-            f"{', '.join(invalid_crt_args)}`"
-        )
+    pass
 
 
 def create_crt_transfer_manager(client, config):
     """Create a CRTTransferManager for optimized data transfer."""
-    crt_s3_client = get_crt_s3_client(client, config)
-    if is_crt_compatible_request(client, crt_s3_client):
-        crt_transfer_manager_kwargs = {
-            'crt_s3_client': crt_s3_client.crt_client,
-            'crt_request_serializer': BOTOCORE_CRT_SERIALIZER,
-        }
-        if TRANSFER_CONFIG_SUPPORTS_CRT:
-            _validate_crt_transfer_config(config)
-            crt_transfer_manager_kwargs['config'] = config
-        if not TRANSFER_CONFIG_SUPPORTS_CRT and config:
-            logger.warning(
-                'Using TransferConfig with CRT client requires '
-                's3transfer >= 0.16.0, configured values will be ignored.'
-            )
-        return CRTTransferManager(**crt_transfer_manager_kwargs)
-    return None
+    pass

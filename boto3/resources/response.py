@@ -23,10 +23,7 @@ def all_not_none(iterable):
     iterable is empty). This is like the built-in ``all``, except checks
     against None, so 0 and False are allowable values.
     """
-    for element in iterable:
-        if element is None:
-            return False
-    return True
+    pass
 
 
 def build_identifiers(identifiers, parent, params=None, raw_response=None):
@@ -48,31 +45,7 @@ def build_identifiers(identifiers, parent, params=None, raw_response=None):
     :rtype: list
     :return: An ordered list of ``(name, value)`` identifier tuples.
     """
-    results = []
-
-    for identifier in identifiers:
-        source = identifier.source
-        target = identifier.target
-
-        if source == 'response':
-            value = jmespath.search(identifier.path, raw_response)
-        elif source == 'requestParameter':
-            value = jmespath.search(identifier.path, params)
-        elif source == 'identifier':
-            value = getattr(parent, xform_name(identifier.name))
-        elif source == 'data':
-            # If this is a data member then it may incur a load
-            # action before returning the value.
-            value = get_data_member(parent, identifier.path)
-        elif source == 'input':
-            # This value is set by the user, so ignore it here
-            continue
-        else:
-            raise NotImplementedError(f'Unsupported source type: {source}')
-
-        results.append((xform_name(target), value))
-
-    return results
+    pass
 
 
 def build_empty_response(search_path, operation_name, service_model):
@@ -91,37 +64,7 @@ def build_empty_response(search_path, operation_name, service_model):
     :rtype: dict, list, or None
     :return: An appropriate empty value
     """
-    response = None
-
-    operation_model = service_model.operation_model(operation_name)
-    shape = operation_model.output_shape
-
-    if search_path:
-        # Walk the search path and find the final shape. For example, given
-        # a path of ``foo.bar[0].baz``, we first find the shape for ``foo``,
-        # then the shape for ``bar`` (ignoring the indexing), and finally
-        # the shape for ``baz``.
-        for item in search_path.split('.'):
-            item = item.strip('[0123456789]$')
-
-            if shape.type_name == 'structure':
-                shape = shape.members[item]
-            elif shape.type_name == 'list':
-                shape = shape.member
-            else:
-                raise NotImplementedError(
-                    f'Search path hits shape type {shape.type_name} from {item}'
-                )
-
-    # Anything not handled here is set to None
-    if shape.type_name == 'structure':
-        response = {}
-    elif shape.type_name == 'list':
-        response = []
-    elif shape.type_name == 'map':
-        response = {}
-
-    return response
+    pass
 
 
 class RawHandler:
@@ -148,11 +91,7 @@ class RawHandler:
         :type response: dict
         :param response: Low-level operation response.
         """
-        # TODO: Remove the '$' check after JMESPath supports it
-        if self.search_path and self.search_path != '$':
-            response = jmespath.search(self.search_path, response)
-
-        return response
+        pass
 
 
 class ResourceHandler:
@@ -204,80 +143,7 @@ class ResourceHandler:
         :type response: dict
         :param response: Low-level operation response.
         """
-        resource_name = self.resource_model.type
-        json_definition = self.service_context.resource_json_definitions.get(
-            resource_name
-        )
-
-        # Load the new resource class that will result from this action.
-        resource_cls = self.factory.load_from_definition(
-            resource_name=resource_name,
-            single_resource_json_definition=json_definition,
-            service_context=self.service_context,
-        )
-        raw_response = response
-        search_response = None
-
-        # Anytime a path is defined, it means the response contains the
-        # resource's attributes, so resource_data gets set here. It
-        # eventually ends up in resource.meta.data, which is where
-        # the attribute properties look for data.
-        if self.search_path:
-            search_response = jmespath.search(self.search_path, raw_response)
-
-        # First, we parse all the identifiers, then create the individual
-        # response resources using them. Any identifiers that are lists
-        # will have one item consumed from the front of the list for each
-        # resource that is instantiated. Items which are not a list will
-        # be set as the same value on each new resource instance.
-        identifiers = dict(
-            build_identifiers(
-                self.resource_model.identifiers, parent, params, raw_response
-            )
-        )
-
-        # If any of the identifiers is a list, then the response is plural
-        plural = [v for v in identifiers.values() if isinstance(v, list)]
-
-        if plural:
-            response = []
-
-            # The number of items in an identifier that is a list will
-            # determine how many resource instances to create.
-            for i in range(len(plural[0])):
-                # Response item data is *only* available if a search path
-                # was given. This prevents accidentally loading unrelated
-                # data that may be in the response.
-                response_item = None
-                if search_response:
-                    response_item = search_response[i]
-                response.append(
-                    self.handle_response_item(
-                        resource_cls, parent, identifiers, response_item
-                    )
-                )
-        elif all_not_none(identifiers.values()):
-            # All identifiers must always exist, otherwise the resource
-            # cannot be instantiated.
-            response = self.handle_response_item(
-                resource_cls, parent, identifiers, search_response
-            )
-        else:
-            # The response should be empty, but that may mean an
-            # empty dict, list, or None based on whether we make
-            # a remote service call and what shape it is expected
-            # to return.
-            response = None
-            if self.operation_name is not None:
-                # A remote service call was made, so try and determine
-                # its shape.
-                response = build_empty_response(
-                    self.search_path,
-                    self.operation_name,
-                    self.service_context.service_model,
-                )
-
-        return response
+        pass
 
     def handle_response_item(
         self, resource_cls, parent, identifiers, resource_data
@@ -297,20 +163,4 @@ class ResourceHandler:
         :rtype: ServiceResource
         :return: New resource instance.
         """
-        kwargs = {
-            'client': parent.meta.client,
-        }
-
-        for name, value in identifiers.items():
-            # If value is a list, then consume the next item
-            if isinstance(value, list):
-                value = value.pop(0)
-
-            kwargs[name] = value
-
-        resource = resource_cls(**kwargs)
-
-        if resource_data is not None:
-            resource.meta.data = resource_data
-
-        return resource
+        pass

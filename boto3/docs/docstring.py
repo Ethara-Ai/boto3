@@ -29,49 +29,49 @@ from boto3.docs.waiter import document_resource_waiter
 
 class ActionDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_action(*args, **kwargs)
+        pass
 
 
 class LoadReloadDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_load_reload_action(*args, **kwargs)
+        pass
 
 
 class SubResourceDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_sub_resource(*args, **kwargs)
+        pass
 
 
 class AttributeDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_attribute(*args, **kwargs)
+        pass
 
 
 class IdentifierDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_identifier(*args, **kwargs)
+        pass
 
 
 class ReferenceDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_reference(*args, **kwargs)
+        pass
 
 
 class CollectionDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_collection_object(*args, **kwargs)
+        pass
 
 
 class CollectionMethodDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_collection_method(*args, **kwargs)
+        pass
 
 
 class BatchActionDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_batch_action(*args, **kwargs)
+        pass
 
 
 class ResourceWaiterDocstring(LazyLoadedDocstring):
     def _write_docstring(self, *args, **kwargs):
-        document_resource_waiter(*args, **kwargs)
+        pass

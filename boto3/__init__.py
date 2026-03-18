@@ -31,8 +31,7 @@ def setup_default_session(**kwargs):
     constructor. There is no need to call this unless you wish to pass custom
     parameters, because a default session will be created for you.
     """
-    global DEFAULT_SESSION
-    DEFAULT_SESSION = Session(**kwargs)
+    pass
 
 
 def set_stream_logger(name='boto3', level=logging.DEBUG, format_string=None):
@@ -58,16 +57,7 @@ def set_stream_logger(name='boto3', level=logging.DEBUG, format_string=None):
     :type format_string: str
     :param format_string: Log message format
     """
-    if format_string is None:
-        format_string = "%(asctime)s %(name)s [%(levelname)s] %(message)s"
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    handler = logging.StreamHandler()
-    handler.setLevel(level)
-    formatter = logging.Formatter(format_string)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    pass
 
 
 def _get_default_session():
@@ -77,11 +67,7 @@ def _get_default_session():
     :rtype: :py:class:`~boto3.session.Session`
     :return: The default session
     """
-    if DEFAULT_SESSION is None:
-        setup_default_session()
-    _warn_deprecated_python()
-
-    return DEFAULT_SESSION
+    pass
 
 
 def client(*args, **kwargs):
@@ -90,7 +76,7 @@ def client(*args, **kwargs):
 
     See :py:meth:`boto3.session.Session.client`.
     """
-    return _get_default_session().client(*args, **kwargs)
+    pass
 
 
 def resource(*args, **kwargs):
@@ -99,7 +85,7 @@ def resource(*args, **kwargs):
 
     See :py:meth:`boto3.session.Session.resource`.
     """
-    return _get_default_session().resource(*args, **kwargs)
+    pass
 
 
 # Set up do-nothing logging like a library is supposed to.
