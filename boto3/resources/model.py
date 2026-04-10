@@ -95,12 +95,7 @@ class DefinitionWithParams:
 
         :type: list(:py:class:`Parameter`)
         """
-        params = []
-
-        for item in self._definition.get('params', []):
-            params.append(Parameter(**item))
-
-        return params
+        pass
 
 
 class Parameter:
@@ -200,12 +195,7 @@ class ResponseResource:
 
         :type: list(:py:class:`Identifier`)
         """
-        identifiers = []
-
-        for item in self._definition.get('identifiers', []):
-            identifiers.append(Parameter(**item))
-
-        return identifiers
+        pass
 
     @property
     def model(self):
@@ -214,9 +204,7 @@ class ResponseResource:
 
         :type: :py:class:`ResourceModel`
         """
-        return ResourceModel(
-            self.type, self._resource_defs[self.type], self._resource_defs
-        )
+        pass
 
 
 class Collection(Action):
@@ -240,7 +228,7 @@ class Collection(Action):
 
         :rtype: list(:py:class:`Action`)
         """
-        return self.resource.model.batch_actions
+        pass
 
 
 class ResourceModel:
@@ -437,16 +425,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Identifier`)
         """
-        identifiers = []
-
-        for item in self._definition.get('identifiers', []):
-            name = self._get_name('identifier', item['name'])
-            member_name = item.get('memberName', None)
-            if member_name:
-                member_name = self._get_name('attribute', member_name)
-            identifiers.append(Identifier(name, member_name))
-
-        return identifiers
+        pass
 
     @property
     def load(self):
@@ -469,13 +448,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Action`)
         """
-        actions = []
-
-        for name, item in self._definition.get('actions', {}).items():
-            name = self._get_name('action', name)
-            actions.append(Action(name, item, self._resource_defs))
-
-        return actions
+        pass
 
     @property
     def batch_actions(self):
@@ -484,13 +457,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Action`)
         """
-        actions = []
-
-        for name, item in self._definition.get('batchActions', {}).items():
-            name = self._get_name('batch_action', name)
-            actions.append(Action(name, item, self._resource_defs))
-
-        return actions
+        pass
 
     def _get_has_definition(self):
         """
@@ -559,27 +526,7 @@ class ResourceModel:
                              get references.
         :rtype: list(:py:class:`Action`)
         """
-        resources = []
-
-        for name, definition in self._get_has_definition().items():
-            if subresources:
-                name = self._get_name('subresource', name, snake_case=False)
-            else:
-                name = self._get_name('reference', name)
-            action = Action(name, definition, self._resource_defs)
-
-            data_required = False
-            for identifier in action.resource.identifiers:
-                if identifier.source == 'data':
-                    data_required = True
-                    break
-
-            if subresources and not data_required:
-                resources.append(action)
-            elif not subresources and data_required:
-                resources.append(action)
-
-        return resources
+        pass
 
     @property
     def subresources(self):
@@ -588,7 +535,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Action`)
         """
-        return self._get_related_resources(True)
+        pass
 
     @property
     def references(self):
@@ -597,7 +544,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Action`)
         """
-        return self._get_related_resources(False)
+        pass
 
     @property
     def collections(self):
@@ -606,13 +553,7 @@ class ResourceModel:
 
         :type: list(:py:class:`Collection`)
         """
-        collections = []
-
-        for name, item in self._definition.get('hasMany', {}).items():
-            name = self._get_name('collection', name)
-            collections.append(Collection(name, item, self._resource_defs))
-
-        return collections
+        pass
 
     @property
     def waiters(self):
@@ -621,10 +562,4 @@ class ResourceModel:
 
         :type: list(:py:class:`Waiter`)
         """
-        waiters = []
-
-        for name, item in self._definition.get('waiters', {}).items():
-            name = self._get_name('waiter', Waiter.PREFIX + name)
-            waiters.append(Waiter(name, item))
-
-        return waiters
+        pass

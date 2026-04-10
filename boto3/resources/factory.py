@@ -294,7 +294,7 @@ class ResourceFactory:
                 resource
             :rtype: list of str
             """
-            return _subresources
+            pass
 
         attrs['get_available_subresources'] = get_available_subresources
 
@@ -325,7 +325,7 @@ class ResourceFactory:
             # identifiers have a value ``None``. If any are ``None``,
             # a more informative user error than a generic AttributeError
             # is raised.
-            return getattr(self, f"_{identifier.name}", None)
+            pass
 
         get_identifier.__name__ = str(identifier.name)
         get_identifier.__doc__ = docstring.IdentifierDocstring(
@@ -344,7 +344,7 @@ class ResourceFactory:
         """
 
         def get_identifier(self):
-            return getattr(self, f"_{identifier.name}", None)
+            pass
 
         get_identifier.__name__ = str(identifier.member_name)
         get_identifier.__doc__ = docstring.AttributeDocstring(
@@ -376,15 +376,7 @@ class ResourceFactory:
         # it first checks to see if it CAN be loaded (raise if not), then
         # calls the load before returning the value.
         def property_loader(self):
-            if self.meta.data is None:
-                if hasattr(self, 'load'):
-                    self.load()
-                else:
-                    raise ResourceLoadException(
-                        f'{self.__class__.__name__} has no load method'
-                    )
-
-            return self.meta.data.get(name)
+            pass
 
         property_loader.__name__ = str(snake_cased)
         property_loader.__doc__ = docstring.AttributeDocstring(
@@ -411,7 +403,7 @@ class ResourceFactory:
         )
 
         def do_waiter(self, *args, **kwargs):
-            waiter(self, *args, **kwargs)
+            pass
 
         do_waiter.__name__ = str(resource_waiter_model.name)
         do_waiter.__doc__ = docstring.ResourceWaiterDocstring(
@@ -438,12 +430,7 @@ class ResourceFactory:
         )
 
         def get_collection(self):
-            return cls(
-                collection_model=collection_model,
-                parent=self,
-                factory=factory_self,
-                service_context=service_context,
-            )
+            pass
 
         get_collection.__name__ = str(collection_model.name)
         get_collection.__doc__ = docstring.CollectionDocstring(
@@ -482,9 +469,7 @@ class ResourceFactory:
             # our data is loaded (if possible) and pass that data into
             # the handler as if it were a response. This allows references
             # to have their data loaded properly.
-            if needs_data and self.meta.data is None and hasattr(self, 'load'):
-                self.load()
-            return handler(self, {}, self.meta.data)
+            pass
 
         get_reference.__name__ = str(reference_model.name)
         get_reference.__doc__ = docstring.ReferenceDocstring(
@@ -505,29 +490,7 @@ class ResourceFactory:
         def create_resource(self, *args, **kwargs):
             # We need a new method here because we want access to the
             # instance's client.
-            positional_args = []
-
-            # We lazy-load the class to handle circular references.
-            json_def = service_context.resource_json_definitions.get(name, {})
-            resource_cls = factory_self.load_from_definition(
-                resource_name=name,
-                single_resource_json_definition=json_def,
-                service_context=service_context,
-            )
-
-            # Assumes that identifiers are in order, which lets you do
-            # e.g. ``sqs.Queue('foo').Message('bar')`` to create a new message
-            # linked with the ``foo`` queue and which has a ``bar`` receipt
-            # handle. If we did kwargs here then future positional arguments
-            # would lead to failure.
-            identifiers = subresource_model.resource.identifiers
-            if identifiers is not None:
-                for identifier, value in build_identifiers(identifiers, self):
-                    positional_args.append(value)
-
-            return partial(
-                resource_cls, *positional_args, client=self.meta.client
-            )(*args, **kwargs)
+            pass
 
         create_resource.__name__ = str(name)
         create_resource.__doc__ = docstring.SubResourceDocstring(
@@ -562,8 +525,7 @@ class ResourceFactory:
             # We need a new method here because we want access to the
             # instance via ``self``.
             def do_action(self, *args, **kwargs):
-                response = action(self, *args, **kwargs)
-                self.meta.data = response
+                pass
 
             # Create the docstring for the load/reload methods.
             lazy_docstring = docstring.LoadReloadDocstring(
@@ -578,15 +540,7 @@ class ResourceFactory:
             # We need a new method here because we want access to the
             # instance via ``self``.
             def do_action(self, *args, **kwargs):
-                response = action(self, *args, **kwargs)
-
-                if hasattr(self, 'load'):
-                    # Clear cached data. It will be reloaded the next
-                    # time that an attribute is accessed.
-                    # TODO: Make this configurable in the future?
-                    self.meta.data = None
-
-                return response
+                pass
 
             lazy_docstring = docstring.ActionDocstring(
                 resource_name=resource_name,

@@ -61,9 +61,7 @@ class ResourceMeta:
         """
         Create a copy of this metadata object.
         """
-        params = self.__dict__.copy()
-        service_name = params.pop('service_name')
-        return ResourceMeta(service_name, **params)
+        pass
 
 
 class ServiceResource:

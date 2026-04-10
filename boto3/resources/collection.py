@@ -130,58 +130,7 @@ class ResourceCollection:
         :rtype: list(:py:class:`~boto3.resources.base.ServiceResource`)
         :return: List of resource instances
         """
-        client = self._parent.meta.client
-        cleaned_params = self._params.copy()
-        limit = cleaned_params.pop('limit', None)
-        page_size = cleaned_params.pop('page_size', None)
-        params = create_request_parameters(self._parent, self._model.request)
-        merge_dicts(params, cleaned_params, append_lists=True)
-
-        # Is this a paginated operation? If so, we need to get an
-        # iterator for the various pages. If not, then we simply
-        # call the operation and return the result as a single
-        # page in a list. For non-paginated results, we just ignore
-        # the page size parameter.
-        if client.can_paginate(self._py_operation_name):
-            logger.debug(
-                'Calling paginated %s:%s with %r',
-                self._parent.meta.service_name,
-                self._py_operation_name,
-                params,
-            )
-            paginator = client.get_paginator(self._py_operation_name)
-            pages = paginator.paginate(
-                PaginationConfig={'MaxItems': limit, 'PageSize': page_size},
-                **params,
-            )
-        else:
-            logger.debug(
-                'Calling %s:%s with %r',
-                self._parent.meta.service_name,
-                self._py_operation_name,
-                params,
-            )
-            pages = [getattr(client, self._py_operation_name)(**params)]
-
-        # Now that we have a page iterator or single page of results
-        # we start processing and yielding individual items.
-        count = 0
-        for page in pages:
-            page_items = []
-            for item in self._handler(self._parent, params, page):
-                page_items.append(item)
-
-                # If the limit is set and has been reached, then
-                # we stop processing items here.
-                count += 1
-                if limit is not None and count >= limit:
-                    break
-
-            yield page_items
-
-            # Stop reading pages if we've reached out limit
-            if limit is not None and count >= limit:
-                break
+        pass
 
     def all(self):
         """
@@ -202,7 +151,7 @@ class ResourceCollection:
             >>> len(queues)
             2
         """
-        return self._clone()
+        pass
 
     def filter(self, **kwargs):
         """
@@ -226,7 +175,7 @@ class ResourceCollection:
 
         :rtype: :py:class:`ResourceCollection`
         """
-        return self._clone(**kwargs)
+        pass
 
     def limit(self, count):
         """
@@ -341,12 +290,12 @@ class CollectionManager:
 
     # Set up some methods to proxy ResourceCollection methods
     def all(self):
-        return self.iterator()
+        pass
 
     all.__doc__ = ResourceCollection.all.__doc__
 
     def filter(self, **kwargs):
-        return self.iterator(**kwargs)
+        pass
 
     filter.__doc__ = ResourceCollection.filter.__doc__
 
@@ -361,7 +310,7 @@ class CollectionManager:
     page_size.__doc__ = ResourceCollection.page_size.__doc__
 
     def pages(self):
-        return self.iterator().pages()
+        pass
 
     pages.__doc__ = ResourceCollection.pages.__doc__
 
@@ -482,7 +431,7 @@ class CollectionFactory:
 
         # A collection's all() method.
         def all(self):
-            return base_class.all(self)
+            pass
 
         all.__doc__ = docstring.CollectionMethodDocstring(
             resource_name=resource_name,
@@ -496,7 +445,7 @@ class CollectionFactory:
 
         # The collection's filter() method.
         def filter(self, **kwargs):
-            return base_class.filter(self, **kwargs)
+            pass
 
         filter.__doc__ = docstring.CollectionMethodDocstring(
             resource_name=resource_name,
@@ -552,7 +501,7 @@ class CollectionFactory:
         action = BatchAction(action_model)
 
         def batch_action(self, *args, **kwargs):
-            return action(self, *args, **kwargs)
+            pass
 
         batch_action.__name__ = str(snake_cased)
         batch_action.__doc__ = docstring.BatchActionDocstring(

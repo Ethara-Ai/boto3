@@ -117,37 +117,34 @@ class Session:
         """
         The **read-only** profile name.
         """
-        return self._session.profile or 'default'
+        pass
 
     @property
     def region_name(self):
         """
         The **read-only** region name.
         """
-        return self._session.get_config_variable('region')
+        pass
 
     @property
     def events(self):
         """
         The event emitter for a session
         """
-        return self._session.get_component('event_emitter')
+        pass
 
     @property
     def available_profiles(self):
         """
         The profiles available to the session credentials
         """
-        return self._session.available_profiles
+        pass
 
     def _setup_loader(self):
         """
         Setup loader paths so that we can load resources.
         """
-        self._loader = self._session.get_component('data_loader')
-        self._loader.search_paths.append(
-            os.path.join(os.path.dirname(__file__), 'data')
-        )
+        pass
 
     def get_available_services(self):
         """
@@ -175,7 +172,7 @@ class Session:
         :rtype: list
         :return: Returns a list of partition names (e.g., ["aws", "aws-cn"])
         """
-        return self._session.get_available_partitions()
+        pass
 
     def get_available_regions(
         self, service_name, partition_name='aws', allow_non_regional=False
@@ -202,11 +199,7 @@ class Session:
 
         :return: Returns a list of endpoint names (e.g., ["us-east-1"]).
         """
-        return self._session.get_available_regions(
-            service_name=service_name,
-            partition_name=partition_name,
-            allow_non_regional=allow_non_regional,
-        )
+        pass
 
     def get_credentials(self):
         """
@@ -216,7 +209,7 @@ class Session:
         have already been loaded, this will return the cached
         credentials.
         """
-        return self._session.get_credentials()
+        pass
 
     def get_partition_for_region(self, region_name):
         """Lists the partition name of a particular region.
@@ -228,7 +221,7 @@ class Session:
         :rtype: string
         :return: Returns the respective partition name (e.g., aws).
         """
-        return self._session.get_partition_for_region(region_name)
+        pass
 
     def client(
         self,
@@ -508,56 +501,7 @@ class Session:
 
     def _register_default_handlers(self):
         # S3 customizations
-        self._session.register(
-            'creating-client-class.s3',
-            boto3.utils.lazy_call(
-                'boto3.s3.inject.inject_s3_transfer_methods'
-            ),
-        )
-        self._session.register(
-            'creating-resource-class.s3.Bucket',
-            boto3.utils.lazy_call('boto3.s3.inject.inject_bucket_methods'),
-        )
-        self._session.register(
-            'creating-resource-class.s3.Object',
-            boto3.utils.lazy_call('boto3.s3.inject.inject_object_methods'),
-        )
-        self._session.register(
-            'creating-resource-class.s3.ObjectSummary',
-            boto3.utils.lazy_call(
-                'boto3.s3.inject.inject_object_summary_methods'
-            ),
-        )
-
-        # DynamoDb customizations
-        self._session.register(
-            'creating-resource-class.dynamodb',
-            boto3.utils.lazy_call(
-                'boto3.dynamodb.transform.register_high_level_interface'
-            ),
-            unique_id='high-level-dynamodb',
-        )
-        self._session.register(
-            'creating-resource-class.dynamodb.Table',
-            boto3.utils.lazy_call(
-                'boto3.dynamodb.table.register_table_methods'
-            ),
-            unique_id='high-level-dynamodb-table',
-        )
-
-        # EC2 Customizations
-        self._session.register(
-            'creating-resource-class.ec2.ServiceResource',
-            boto3.utils.lazy_call('boto3.ec2.createtags.inject_create_tags'),
-        )
-
-        self._session.register(
-            'creating-resource-class.ec2.Instance',
-            boto3.utils.lazy_call(
-                'boto3.ec2.deletetags.inject_delete_tags',
-                event_emitter=self.events,
-            ),
-        )
+        pass
 
     def _account_id_set_without_credentials(
         self,
@@ -567,8 +511,4 @@ class Session:
         aws_secret_access_key,
         **kwargs,
     ):
-        if aws_account_id is None:
-            return False
-        elif aws_access_key_id is None or aws_secret_access_key is None:
-            return True
-        return False
+        pass

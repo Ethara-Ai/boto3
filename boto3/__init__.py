@@ -58,16 +58,7 @@ def set_stream_logger(name='boto3', level=logging.DEBUG, format_string=None):
     :type format_string: str
     :param format_string: Log message format
     """
-    if format_string is None:
-        format_string = "%(asctime)s %(name)s [%(levelname)s] %(message)s"
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    handler = logging.StreamHandler()
-    handler.setLevel(level)
-    formatter = logging.Formatter(format_string)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    pass
 
 
 def _get_default_session():

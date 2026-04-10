@@ -332,7 +332,7 @@ class ResourceDocumenter(BaseDocumenter):
 class ServiceResourceDocumenter(ResourceDocumenter):
     @property
     def class_name(self):
-        return f'{self._service_docs_name}.ServiceResource'
+        pass
 
     def _add_title(self, section):
         title_section = section.add_new_section('title')

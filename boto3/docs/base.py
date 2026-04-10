@@ -32,7 +32,7 @@ class BaseDocumenter:
 
     @property
     def class_name(self):
-        return f'{self._service_docs_name}.{self._resource_name}'
+        pass
 
 
 class NestedDocumenter(BaseDocumenter):
@@ -45,7 +45,4 @@ class NestedDocumenter(BaseDocumenter):
 
     @property
     def class_name(self):
-        resource_class_name = self._resource_name
-        if self._resource_name == self._service_name:
-            resource_class_name = 'ServiceResource'
-        return f'{self._service_docs_name}.{resource_class_name}'
+        pass

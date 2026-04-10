@@ -244,14 +244,4 @@ class CustomModeledAction:
         self.emitter = event_emitter
 
     def inject(self, class_attributes, service_context, event_name, **kwargs):
-        resource_name = event_name.rsplit(".")[-1]
-        action = Action(self.name, self.model, {})
-        self.function.__name__ = self.name
-        self.function.__doc__ = ActionDocstring(
-            resource_name=resource_name,
-            event_emitter=self.emitter,
-            action_model=action,
-            service_model=service_context.service_model,
-            include_signature=False,
-        )
-        inject_attribute(class_attributes, self.name, self.function)
+        pass

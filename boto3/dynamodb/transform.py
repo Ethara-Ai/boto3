@@ -19,7 +19,7 @@ from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
 
 
 def register_high_level_interface(base_classes, **kwargs):
-    base_classes.insert(0, DynamoDBHighLevelResource)
+    pass
 
 
 class _ForgetfulDict(dict):
@@ -33,7 +33,7 @@ class _ForgetfulDict(dict):
 
 
 def copy_dynamodb_params(params, **kwargs):
-    return copy.deepcopy(params, memo=_ForgetfulDict())
+    pass
 
 
 class DynamoDBHighLevelResource:
@@ -169,67 +169,15 @@ class TransformationInjector:
         and KeyExpression shapes. It also handles any placeholder names and
         values that are generated when transforming the condition expressions.
         """
-        self._condition_builder.reset()
-        generated_names = {}
-        generated_values = {}
-
-        # Create and apply the Condition Expression transformation.
-        transformation = ConditionExpressionTransformation(
-            self._condition_builder,
-            placeholder_names=generated_names,
-            placeholder_values=generated_values,
-            is_key_condition=False,
-        )
-        self._transformer.transform(
-            params, model.input_shape, transformation, 'ConditionExpression'
-        )
-
-        # Create and apply the Key Condition Expression transformation.
-        transformation = ConditionExpressionTransformation(
-            self._condition_builder,
-            placeholder_names=generated_names,
-            placeholder_values=generated_values,
-            is_key_condition=True,
-        )
-        self._transformer.transform(
-            params, model.input_shape, transformation, 'KeyExpression'
-        )
-
-        expr_attr_names_input = 'ExpressionAttributeNames'
-        expr_attr_values_input = 'ExpressionAttributeValues'
-
-        # Now that all of the condition expression transformation are done,
-        # update the placeholder dictionaries in the request.
-        if expr_attr_names_input in params:
-            params[expr_attr_names_input].update(generated_names)
-        else:
-            if generated_names:
-                params[expr_attr_names_input] = generated_names
-
-        if expr_attr_values_input in params:
-            params[expr_attr_values_input].update(generated_values)
-        else:
-            if generated_values:
-                params[expr_attr_values_input] = generated_values
+        pass
 
     def inject_attribute_value_input(self, params, model, **kwargs):
         """Injects DynamoDB serialization into parameter input"""
-        self._transformer.transform(
-            params,
-            model.input_shape,
-            self._serializer.serialize,
-            'AttributeValue',
-        )
+        pass
 
     def inject_attribute_value_output(self, parsed, model, **kwargs):
         """Injects DynamoDB deserialization into responses"""
-        if model.output_shape is not None:
-            self._transformer.transform(
-                parsed,
-                model.output_shape,
-                self._deserializer.deserialize,
-                'AttributeValue',
-            )
+        pass
 
 
 class ConditionExpressionTransformation:
@@ -286,58 +234,20 @@ class ParameterTransformer:
         :param target_shape: The name of the shape to apply the
             transformation to
         """
-        self._transform_parameters(model, params, transformation, target_shape)
+        pass
 
     def _transform_parameters(
         self, model, params, transformation, target_shape
     ):
-        type_name = model.type_name
-        if type_name in ('structure', 'map', 'list'):
-            getattr(self, f'_transform_{type_name}')(
-                model, params, transformation, target_shape
-            )
+        pass
 
     def _transform_structure(
         self, model, params, transformation, target_shape
     ):
-        if not isinstance(params, collections_abc.Mapping):
-            return
-        for param in params:
-            if param in model.members:
-                member_model = model.members[param]
-                member_shape = member_model.name
-                if member_shape == target_shape:
-                    params[param] = transformation(params[param])
-                else:
-                    self._transform_parameters(
-                        member_model,
-                        params[param],
-                        transformation,
-                        target_shape,
-                    )
+        pass
 
     def _transform_map(self, model, params, transformation, target_shape):
-        if not isinstance(params, collections_abc.Mapping):
-            return
-        value_model = model.value
-        value_shape = value_model.name
-        for key, value in params.items():
-            if value_shape == target_shape:
-                params[key] = transformation(value)
-            else:
-                self._transform_parameters(
-                    value_model, params[key], transformation, target_shape
-                )
+        pass
 
     def _transform_list(self, model, params, transformation, target_shape):
-        if not isinstance(params, collections_abc.MutableSequence):
-            return
-        member_model = model.member
-        member_shape = member_model.name
-        for i, item in enumerate(params):
-            if member_shape == target_shape:
-                params[i] = transformation(item)
-            else:
-                self._transform_parameters(
-                    member_model, params[i], transformation, target_shape
-                )
+        pass

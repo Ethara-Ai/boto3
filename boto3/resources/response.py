@@ -23,10 +23,7 @@ def all_not_none(iterable):
     iterable is empty). This is like the built-in ``all``, except checks
     against None, so 0 and False are allowable values.
     """
-    for element in iterable:
-        if element is None:
-            return False
-    return True
+    pass
 
 
 def build_identifiers(identifiers, parent, params=None, raw_response=None):
@@ -91,37 +88,7 @@ def build_empty_response(search_path, operation_name, service_model):
     :rtype: dict, list, or None
     :return: An appropriate empty value
     """
-    response = None
-
-    operation_model = service_model.operation_model(operation_name)
-    shape = operation_model.output_shape
-
-    if search_path:
-        # Walk the search path and find the final shape. For example, given
-        # a path of ``foo.bar[0].baz``, we first find the shape for ``foo``,
-        # then the shape for ``bar`` (ignoring the indexing), and finally
-        # the shape for ``baz``.
-        for item in search_path.split('.'):
-            item = item.strip('[0123456789]$')
-
-            if shape.type_name == 'structure':
-                shape = shape.members[item]
-            elif shape.type_name == 'list':
-                shape = shape.member
-            else:
-                raise NotImplementedError(
-                    f'Search path hits shape type {shape.type_name} from {item}'
-                )
-
-    # Anything not handled here is set to None
-    if shape.type_name == 'structure':
-        response = {}
-    elif shape.type_name == 'list':
-        response = []
-    elif shape.type_name == 'map':
-        response = {}
-
-    return response
+    pass
 
 
 class RawHandler:
@@ -297,20 +264,4 @@ class ResourceHandler:
         :rtype: ServiceResource
         :return: New resource instance.
         """
-        kwargs = {
-            'client': parent.meta.client,
-        }
-
-        for name, value in identifiers.items():
-            # If value is a list, then consume the next item
-            if isinstance(value, list):
-                value = value.pop(0)
-
-            kwargs[name] = value
-
-        resource = resource_cls(**kwargs)
-
-        if resource_data is not None:
-            resource.meta.data = resource_data
-
-        return resource
+        pass

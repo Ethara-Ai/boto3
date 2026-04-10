@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def register_table_methods(base_classes, **kwargs):
-    base_classes.insert(0, TableResource)
+    pass
 
 
 # This class can be used to add any additional methods we want
@@ -55,9 +55,7 @@ class TableResource:
             ``["partition_key1", "sort_key2", "sort_key3"]``
 
         """
-        return BatchWriter(
-            self.name, self.meta.client, overwrite_by_pkeys=overwrite_by_pkeys
-        )
+        pass
 
 
 class BatchWriter:
@@ -100,62 +98,25 @@ class BatchWriter:
         self._overwrite_by_pkeys = overwrite_by_pkeys
 
     def put_item(self, Item):
-        self._add_request_and_process({'PutRequest': {'Item': Item}})
+        pass
 
     def delete_item(self, Key):
-        self._add_request_and_process({'DeleteRequest': {'Key': Key}})
+        pass
 
     def _add_request_and_process(self, request):
-        if self._overwrite_by_pkeys:
-            self._remove_dup_pkeys_request_if_any(request)
-        self._items_buffer.append(request)
-        self._flush_if_needed()
+        pass
 
     def _remove_dup_pkeys_request_if_any(self, request):
-        pkey_values_new = self._extract_pkey_values(request)
-        for item in self._items_buffer:
-            if self._extract_pkey_values(item) == pkey_values_new:
-                self._items_buffer.remove(item)
-                logger.debug(
-                    "With overwrite_by_pkeys enabled, skipping request:%s",
-                    item,
-                )
+        pass
 
     def _extract_pkey_values(self, request):
-        if request.get('PutRequest'):
-            return [
-                request['PutRequest']['Item'][key]
-                for key in self._overwrite_by_pkeys
-            ]
-        elif request.get('DeleteRequest'):
-            return [
-                request['DeleteRequest']['Key'][key]
-                for key in self._overwrite_by_pkeys
-            ]
-        return None
+        pass
 
     def _flush_if_needed(self):
-        if len(self._items_buffer) >= self._flush_amount:
-            self._flush()
+        pass
 
     def _flush(self):
-        items_to_send = self._items_buffer[: self._flush_amount]
-        self._items_buffer = self._items_buffer[self._flush_amount :]
-        response = self._client.batch_write_item(
-            RequestItems={self._table_name: items_to_send}
-        )
-        unprocessed_items = response['UnprocessedItems']
-        if not unprocessed_items:
-            unprocessed_items = {}
-        item_list = unprocessed_items.get(self._table_name, [])
-        # Any unprocessed_items are immediately added to the
-        # next batch we send.
-        self._items_buffer.extend(item_list)
-        logger.debug(
-            "Batch write sent %s, unprocessed: %s",
-            len(items_to_send),
-            len(self._items_buffer),
-        )
+        pass
 
     def __enter__(self):
         return self
